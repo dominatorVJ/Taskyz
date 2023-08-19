@@ -1,0 +1,68 @@
+<%- include('partials/header'); -%>
+
+<form action="/todos">
+  <h3 class="rem-task">Remaining Tasks</h3>
+  <label for="task">Add a new Task</label>
+  <input class="inputTask" type="text" name="task" required="true" />
+  <button class="add-btn">Add Now</button>
+  <ul class="taskList">
+    <% todos.forEach(function(todo){ %>
+    <li>
+      <%= todo.task %>
+      <span onclick="deleteTask('<%= todo.task %>')"
+        ><i class="far fa-times-circle"></i
+      ></span>
+    </li>
+    <% }); %>
+  </ul>
+</form>
+
+<%- include('partials/footer'); -%>
+
+<script>
+  const User = `<%- JSON.stringify(user) %>`;
+  const currentUser = JSON.parse(User);
+  const form = document.querySelector("form");
+  const addbtn = document.querySelector(".add-btn");
+  const inputTask = document.querySelector(".inputTask");
+  inputTask.onkeyup = () => {
+    let userdata = inputTask.value;
+    if (userdata.trim() != 0) {
+      addbtn.classList.add("active");
+    } else {
+      addbtn.classList.remove("active");
+    }
+  };
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const task = form.task.value;
+    const userId = currentUser._id;
+    try {
+      const res = await fetch("/todos", {
+        method: "POST",
+        body: JSON.stringify({ task, userId }),
+        headers: { "Content-Type": "application/json" },
+      });
+      const data = await res.json();
+      location.assign("/todos");
+    } catch (err) {
+      console.log(err);
+    }
+  });
+
+  deleteTask = async (task) => {
+    const userId = currentUser._id;
+    // console.log(task);
+    try {
+      const res = await fetch("/todos", {
+        method: "DELETE",
+        body: JSON.stringify({ task, userId }),
+        headers: { "Content-Type": "application/json" },
+      });
+      const data = await res.json();
+      location.assign("/todos");
+    } catch (err) {
+      console.log(err);
+    }
+  };
+</script>
