@@ -24,7 +24,7 @@ app.set("view engine", "ejs");
 // database connection
 mongoose
   .connect(
-    "mongodb+srv://1vishaljee:1vishaljee@cluster0.yrcgkie.mongodb.net/?retryWrites=true&w=majority",
+    process.env.MONGO_URI,
     {}
   )
   .then(console.log("Connected to MongoDB Atlas"))
